@@ -6,7 +6,7 @@
 /*   By: tzenz <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/24 10:36:28 by tzenz             #+#    #+#             */
-/*   Updated: 2019/10/08 13:13:19 by tzenz            ###   ########.fr       */
+/*   Updated: 2019/10/08 14:18:06 by tzenz            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,18 @@ char	*ch(char *res, char **line)
 	return (tmp);
 }
 
+int		ch_lk(char *leak, char **line)
+{
+	int		i;
+
+	i = 0;
+	if (leak == 0 || *line == 0)
+		return (0);
+	if (leak)
+		i = ft_strcmp(leak, *line);
+	return (i);
+}
+
 int		get_next_line(const int fd, char **line)
 {
 	static char		*res;
@@ -48,6 +60,8 @@ int		get_next_line(const int fd, char **line)
 
 	if (line == 0)
 		return (-1);
+	if (ch_lk(leak, line) == 0)
+	{
 	tmp = ch(res, line);
 	while (!tmp && (r = read(fd, buf, BUFF_SIZE)))
 	{
@@ -61,7 +75,27 @@ int		get_next_line(const int fd, char **line)
 		}
 		leak = *line;
 		*line = ft_strjoin(*line, buf);
-		free(leak);
 	}
-	return (r || ft_strlen(res) || ft_strlen(*line)) ? 1 : 0;
+	}
+//	return (r || ft_strlen(res) || ft_strlen(*line)) ? 1 : 0;
+	return (1);
+}
+
+int		main(void)
+{
+	int		op1;
+	int		op2;
+	char	*ln;
+	int		i = 5;
+
+	op1 = open("file1", O_RDONLY);
+	op2 = open("file2", O_RDONLY);
+	while (i--)
+	{
+		get_next_line(op1, &ln);
+		printf("%s\n", ln);
+		get_next_line(op2, &ln);
+		printf("%s\n", ln);
+	}
+	return (0);
 }
